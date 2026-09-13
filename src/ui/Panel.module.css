@@ -1,0 +1,57 @@
+.panel {
+  position: relative;
+  padding: 9px 13px;
+  background: var(--panel-bg);
+  border: var(--panel-border-width) solid var(--panel-border);
+  border-radius: var(--panel-radius);
+  box-shadow: var(--panel-shadow);
+  transform: rotate(var(--panel-rotate));
+  color: var(--text);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  transition: background-color var(--dur-slow) ease, border-color var(--dur-slow) ease;
+}
+
+/* technical direction gets drafting corner ticks instead of a wobble */
+:root[data-theme='technical'] .panel::before,
+:root[data-theme='technical'] .panel::after {
+  content: '';
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border: 1px solid var(--accent);
+  opacity: 0.85;
+}
+
+:root[data-theme='technical'] .panel::before {
+  top: -1px;
+  left: -1px;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+:root[data-theme='technical'] .panel::after {
+  right: -1px;
+  bottom: -1px;
+  border-top: 0;
+  border-left: 0;
+}
+
+.label {
+  display: block;
+  font-family: var(--font-label);
+  font-size: 10px;
+  line-height: 1.4;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.value {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}

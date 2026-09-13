@@ -1,0 +1,219 @@
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  padding: var(--hud-pad);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-slow) ease, visibility 0s linear var(--dur-slow);
+}
+
+.root[data-visible='true'] {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--dur-slow) ease, visibility 0s;
+}
+
+/* ---------------------------------------------------------------- metadata */
+
+.meta,
+.topRight {
+  position: absolute;
+  top: var(--hud-pad);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.meta {
+  left: var(--hud-pad);
+}
+
+.topRight {
+  right: var(--hud-pad);
+}
+
+.rule {
+  width: 46px;
+  height: 1px;
+  background: var(--line-faint);
+}
+
+.eyebrow,
+.eyebrowDim,
+.axisIndex,
+.axisLabel,
+.axisNote,
+.foot,
+.cta {
+  font-family: var(--font-label);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking);
+}
+
+.eyebrow {
+  font-size: 11px;
+  color: var(--text);
+}
+
+.eyebrowDim {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* ------------------------------------------------------------------ copy */
+
+.copy {
+  position: absolute;
+  top: 50%;
+  left: var(--hud-pad);
+  width: min(30rem, 42vw);
+  transform: translateY(-50%);
+  animation: rise 900ms ease both;
+  animation-delay: 200ms;
+}
+
+.headline {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: clamp(30px, 3.9vw, 58px);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.headline span {
+  display: block;
+}
+
+.body {
+  margin: 20px 0 0;
+  max-width: 34ch;
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--text-dim);
+}
+
+/* ------------------------------------------------------------------ axes */
+
+.axes {
+  margin: 30px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line-faint);
+}
+
+.axis {
+  display: grid;
+  grid-template-columns: 26px 24px auto;
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line-faint);
+  color: var(--text);
+}
+
+.axisIndex {
+  grid-row: 1;
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.axisIcon {
+  grid-row: 1;
+  color: var(--accent);
+}
+
+.axisLabel {
+  grid-row: 1;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.axisNote {
+  grid-column: 3;
+  grid-row: 2;
+  margin-top: 2px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--text-dim);
+}
+
+/* ------------------------------------------------------------------- cta */
+
+.cta {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 30px;
+  padding: 15px 22px;
+  font-size: 12px;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--panel-radius);
+  cursor: pointer;
+  transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease,
+    background-color var(--dur-fast) ease;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.ctaIcon {
+  color: var(--accent);
+}
+
+.ctaArrow {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.foot {
+  position: absolute;
+  bottom: var(--hud-pad);
+  left: var(--hud-pad);
+  margin: 0;
+  font-size: 10px;
+  color: var(--text-dim);
+  opacity: 0.75;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-50% + 14px));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+}
+
+@media (max-width: 900px) {
+  .copy {
+    top: auto;
+    bottom: calc(var(--hud-pad) + 8px);
+    width: auto;
+    transform: none;
+    animation: none;
+  }
+  .headline {
+    font-size: clamp(26px, 8vw, 38px);
+  }
+  .axes,
+  .body {
+    display: none;
+  }
+  .foot {
+    display: none;
+  }
+}

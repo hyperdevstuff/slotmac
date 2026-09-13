@@ -1,0 +1,38 @@
+:root {
+  /* ---------------------------------------------------------------- structure */
+  --hud-pad: clamp(14px, 2.4vw, 30px);
+  --radius-sm: 2px;
+  --dur-fast: 140ms;
+  --dur-med: 320ms;
+  --dur-slow: 640ms;
+
+  /* ------------------------------------------------------------------- type */
+  --font-ui: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-label: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --tracking: 0.16em;
+
+  /* ---------------------------------------------------------------- palette */
+  --bg: #06080d;
+  --bg-2: #0b0f18;
+  --grid: rgba(120, 150, 255, 0.055);
+  --grid-strong: rgba(120, 150, 255, 0.11);
+  --grid-size: 34px;
+
+  --line: #d8e4ff;
+  --line-dim: rgba(216, 228, 255, 0.3);
+  --line-faint: rgba(216, 228, 255, 0.12);
+  --accent: #4d7cff;
+  --accent-hot: #8fb0ff;
+  --red: #ff5a6a;
+
+  --text: #d8e4ff;
+  --text-dim: rgba(216, 228, 255, 0.55);
+
+  /* ----------------------------------------------------------------- panels */
+  --panel-bg: rgba(8, 11, 18, 0.72);
+  --panel-border: rgba(216, 228, 255, 0.28);
+  --panel-border-width: 1px;
+  --panel-radius: 2px;
+  --panel-rotate: 0deg;
+  --panel-shadow: none;
+}
