@@ -6,7 +6,10 @@ export interface DeckItem {
   id: string
   /** the full text, shown in the readout — can be a phrase */
   label: string
-  /** optional override for the short label drawn on the drum; longest readable is ~11 chars */
+  /** the mark drawn on the drum, e.g. `rune/nature-sun`. Unset falls back to a
+   *  deterministic pick, so an item always shows something. */
+  icon?: string
+  /** optional override for the abbreviated label the result readout shows */
   short?: string
 }
 
@@ -22,14 +25,14 @@ export interface Deck {
   reels: DeckReel[]
 }
 
-/** how many characters stay legible on a drum tile */
-export const DRUM_LABEL_MAX = 11
+/** how many characters the result readout can fit per column */
+export const SHORT_LABEL_MAX = 11
 
-export function drumLabel(item: DeckItem): string {
+export function shortLabel(item: DeckItem): string {
   if (item.short) return item.short
   const label = item.label.trim()
-  if (label.length <= DRUM_LABEL_MAX) return label
-  const cut = label.slice(0, DRUM_LABEL_MAX - 1)
+  if (label.length <= SHORT_LABEL_MAX) return label
+  const cut = label.slice(0, SHORT_LABEL_MAX - 1)
   const lastSpace = cut.lastIndexOf(' ')
   return (lastSpace > 4 ? cut.slice(0, lastSpace) : cut).trimEnd() + '…'
 }
@@ -41,9 +44,12 @@ export function newId(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${idCounter}`
 }
 
+/** [label, icon, abbreviated form?] — the abbreviation is only needed for long labels */
+type ShippedItem = [string, string] | [string, string, string]
+
 /** stable ids for shipped items, so re-loading never duplicates them */
-function items(prefix: string, ...labels: string[]): DeckItem[] {
-  return labels.map((label, index) => ({ id: `${prefix}-${index}`, label }))
+function items(prefix: string, entries: ShippedItem[]): DeckItem[] {
+  return entries.map(([label, icon, short], index) => ({ id: `${prefix}-${index}`, label, icon, short }))
 }
 
 export const SHIPPED_DECKS: Deck[] = [
@@ -51,23 +57,43 @@ export const SHIPPED_DECKS: Deck[] = [
     id: 'ui',
     name: 'Interface',
     reels: [
-      { id: 'ui-type', name: 'Type', items: items('ui-type', 'Inter', 'Space Grotesk', 'IBM Plex Mono', 'Fraunces', 'Archivo', 'JetBrains Mono') },
+      {
+        id: 'ui-type',
+        name: 'Type',
+        items: items('ui-type', [
+          ['Inter', 'lucide/type'],
+          ['Space Grotesk', 'lucide/baseline'],
+          ['IBM Plex Mono', 'lucide/terminal'],
+          ['Fraunces', 'lucide/italic'],
+          ['Archivo', 'lucide/align-left'],
+          ['JetBrains Mono', 'lucide/braces'],
+        ]),
+      },
       {
         id: 'ui-colour',
         name: 'Colour',
-        items: [
-          { id: 'ui-colour-0', label: 'Cold, high contrast', short: 'COLD' },
-          { id: 'ui-colour-1', label: 'Warm neutrals', short: 'WARM' },
-          { id: 'ui-colour-2', label: 'One accent only', short: '1 ACCENT' },
-          { id: 'ui-colour-3', label: 'Duotone', short: 'DUOTONE' },
-          { id: 'ui-colour-4', label: 'Muted pastels', short: 'PASTEL' },
-          { id: 'ui-colour-5', label: 'Greyscale plus one hue', short: 'GREY+1' },
-        ],
+        items: items('ui-colour', [
+          ['Cold, high contrast', 'lucide/snowflake', 'COLD'],
+          ['Warm neutrals', 'lucide/flame', 'WARM'],
+          ['One accent only', 'lucide/target', '1 ACCENT'],
+          ['Duotone', 'lucide/aperture', 'DUOTONE'],
+          ['Muted pastels', 'lucide/flower', 'PASTEL'],
+          ['Greyscale plus one hue', 'lucide/palette', 'GREY+1'],
+        ]),
       },
       {
         id: 'ui-component',
         name: 'Component',
-        items: items('ui-component', 'Hero', 'Pricing table', 'Navigation', 'Card', 'Empty state', 'Footer', 'Modal', 'Changelog'),
+        items: items('ui-component', [
+          ['Hero', 'lucide/layout-dashboard'],
+          ['Pricing table', 'lucide/receipt'],
+          ['Navigation', 'rune/layouts-menu'],
+          ['Card', 'lucide/square'],
+          ['Empty state', 'lucide/inbox'],
+          ['Footer', 'rune/layouts-panel-bottom'],
+          ['Modal', 'lucide/layout-template'],
+          ['Changelog', 'rune/schedule-history'],
+        ]),
       },
     ],
   },
@@ -75,27 +101,38 @@ export const SHIPPED_DECKS: Deck[] = [
     id: 'systems',
     name: 'System design',
     reels: [
-      { id: 'sys-problem', name: 'Problem', items: items('sys-problem', 'Feed', 'Chat', 'Rate limiter', 'Search', 'Payments', 'Notifications') },
+      {
+        id: 'sys-problem',
+        name: 'Problem',
+        items: items('sys-problem', [
+          ['Feed', 'lucide/waves'],
+          ['Chat', 'rune/messaging-message-square'],
+          ['Rate limiter', 'lucide/gauge'],
+          ['Search', 'rune/tools-search'],
+          ['Payments', 'rune/money-credit-card'],
+          ['Notifications', 'lucide/bell'],
+        ]),
+      },
       {
         id: 'sys-scale',
         name: 'Scale',
-        items: [
-          { id: 'sys-scale-0', label: '1k users', short: '1K' },
-          { id: 'sys-scale-1', label: '100k users', short: '100K' },
-          { id: 'sys-scale-2', label: '10M writes per day', short: '10M/DAY' },
-          { id: 'sys-scale-3', label: '1M concurrent', short: '1M CONC' },
-        ],
+        items: items('sys-scale', [
+          ['1k users', 'lucide/user', '1K'],
+          ['100k users', 'rune/identity-users', '100K'],
+          ['10M writes per day', 'lucide/database-zap', '10M/DAY'],
+          ['1M concurrent', 'lucide/activity', '1M CONC'],
+        ]),
       },
       {
         id: 'sys-constraint',
         name: 'Constraint',
-        items: [
-          { id: 'sys-con-0', label: 'No managed services', short: 'NO MANAGED' },
-          { id: 'sys-con-1', label: 'Single region', short: '1 REGION' },
-          { id: 'sys-con-2', label: 'Read heavy', short: 'READ HEAVY' },
-          { id: 'sys-con-3', label: 'Eventual consistency', short: 'EVENTUAL' },
-          { id: 'sys-con-4', label: 'Budget: one server', short: '1 SERVER' },
-        ],
+        items: items('sys-constraint', [
+          ['No managed services', 'rune/identity-shield-x', 'NO MANAGED'],
+          ['Single region', 'lucide/globe', '1 REGION'],
+          ['Read heavy', 'lucide/eye', 'READ HEAVY'],
+          ['Eventual consistency', 'lucide/refresh-cw', 'EVENTUAL'],
+          ['Budget: one server', 'lucide/server', '1 SERVER'],
+        ]),
       },
     ],
   },
@@ -103,26 +140,36 @@ export const SHIPPED_DECKS: Deck[] = [
     id: 'maths',
     name: 'Maths',
     reels: [
-      { id: 'math-topic', name: 'Topic', items: items('math-topic', 'Graphs', 'Probability', 'Number theory', 'Linear algebra', 'Topology') },
+      {
+        id: 'math-topic',
+        name: 'Topic',
+        items: items('math-topic', [
+          ['Graphs', 'lucide/chart-line'],
+          ['Probability', 'lucide/dices'],
+          ['Number theory', 'lucide/hash'],
+          ['Linear algebra', 'lucide/grid-3x3'],
+          ['Topology', 'lucide/spline'],
+        ]),
+      },
       {
         id: 'math-level',
         name: 'Level',
-        items: [
-          { id: 'math-level-0', label: 'Explain it plainly', short: 'PLAIN' },
-          { id: 'math-level-1', label: 'Prove it', short: 'PROOF' },
-          { id: 'math-level-2', label: 'Find a counterexample', short: 'DISPROVE' },
-          { id: 'math-level-3', label: 'Implement it', short: 'CODE IT' },
-        ],
+        items: items('math-level', [
+          ['Explain it plainly', 'lucide/message-circle', 'PLAIN'],
+          ['Prove it', 'lucide/badge-check', 'PROOF'],
+          ['Find a counterexample', 'lucide/crosshair', 'DISPROVE'],
+          ['Implement it', 'lucide/code', 'CODE IT'],
+        ]),
       },
       {
         id: 'math-output',
         name: 'Output',
-        items: [
-          { id: 'math-out-0', label: 'A diagram', short: 'DIAGRAM' },
-          { id: 'math-out-1', label: 'A short note', short: 'NOTE' },
-          { id: 'math-out-2', label: 'A worked example', short: 'EXAMPLE' },
-          { id: 'math-out-3', label: 'A proof sketch', short: 'SKETCH' },
-        ],
+        items: items('math-output', [
+          ['A diagram', 'lucide/route', 'DIAGRAM'],
+          ['A short note', 'rune/documents-file-text', 'NOTE'],
+          ['A worked example', 'lucide/lightbulb', 'EXAMPLE'],
+          ['A proof sketch', 'rune/tools-pencil', 'SKETCH'],
+        ]),
       },
     ],
   },

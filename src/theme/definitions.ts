@@ -28,7 +28,7 @@ export interface ThemeDef {
   pointIntensity: number
   /** opaque backdrop painted into the reel strips */
   reelBackground: string
-  /** how each deck item is drawn on its drum: rune mark plus short label */
+  /** how each deck item's icon is drawn on its drum */
   mark: ReelMarkStyle
 }
 
@@ -38,7 +38,7 @@ export interface ThemeDef {
  * materials.tsx, which is the only place that turns these values into materials.
  */
 export const THEME: ThemeDef = {
-  tagline: 'isometric wireframe',
+  tagline: 'Randomizing Machine',
   accent: '#4d7cff',
   accentHot: '#8fb0ff',
   line: '#d8e4ff',
@@ -55,5 +55,7 @@ export const THEME: ThemeDef = {
   keyIntensity: 1.7,
   pointIntensity: 24,
   reelBackground: '#0a0e16',
-  mark: { ink: '#d8e4ff', accent: '#4d7cff', strokeWidth: 0.055 },
+  // strokeWidth is in the icon's own 24-grid units; the libraries draw at 2, and the
+  // machine's edges are thinner than that, so the marks land just under them
+  mark: { ink: '#d8e4ff', strokeWidth: 1.4 },
 }

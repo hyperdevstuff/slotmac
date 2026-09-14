@@ -3,6 +3,7 @@ import { Backdrop } from './scene/Backdrop'
 import { Scene } from './scene/Scene'
 import { Hud } from './ui/Hud'
 import { Landing } from './ui/Landing'
+import { MarkTip } from './ui/MarkTip'
 import { useAppSync } from './theme/useAppSync'
 import { useGameStore } from './stores/gameStore'
 import { sfx } from './lib/audio'
@@ -51,6 +52,7 @@ export default function App() {
       {webgl ? <Scene /> : <NoWebGL />}
       <Landing />
       <Hud />
+      <MarkTip />
     </>
   )
 }

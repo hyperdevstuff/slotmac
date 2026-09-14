@@ -59,6 +59,7 @@ interface DeckState {
   setActiveDeck: (deckId: string) => void
   addItem: (reelId: string, label: string) => void
   removeItem: (reelId: string, itemId: string) => void
+  setItemIcon: (reelId: string, itemId: string, icon: string) => void
   resetDecks: () => void
   countBrief: () => void
 }
@@ -99,6 +100,18 @@ export const useDeckStore = create<DeckState>((set, get) => {
           ...deck,
           reels: deck.reels.map((reel) =>
             reel.id === reelId ? { ...reel, items: reel.items.filter((item) => item.id !== itemId) } : reel,
+          ),
+        })),
+      }),
+
+    setItemIcon: (reelId, itemId, icon) =>
+      commit({
+        decks: get().decks.map((deck) => ({
+          ...deck,
+          reels: deck.reels.map((reel) =>
+            reel.id === reelId
+              ? { ...reel, items: reel.items.map((item) => (item.id === itemId ? { ...item, icon } : item)) }
+              : reel,
           ),
         })),
       }),

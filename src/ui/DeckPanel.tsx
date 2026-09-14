@@ -1,12 +1,18 @@
 import { useState } from 'react'
 import { activeDeck, useDeckStore } from '../stores/deckStore'
-import { DRUM_LABEL_MAX, drumLabel } from '../lib/deck'
+import { SHORT_LABEL_MAX, shortLabel } from '../lib/deck'
+import { iconFor, iconIdFor } from '../lib/icons'
 import { Button } from './Button'
+import { Icon } from './Icon'
+import { IconPicker } from './IconPicker'
 import styles from './DeckPanel.module.css'
 
 /**
  * Load the machine. Each deck is a set of reels, each reel is a list of items — this is
  * the only place the user writes anything; the machine just draws from it.
+ *
+ * An item is a label *and* a mark: the label is what the brief spells out, the icon is
+ * what the drum shows. Both are editable here.
  */
 export function DeckPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const decks = useDeckStore((s) => s.decks)
@@ -14,10 +20,12 @@ export function DeckPanel({ open, onClose }: { open: boolean; onClose: () => voi
   const setActiveDeck = useDeckStore((s) => s.setActiveDeck)
   const addItem = useDeckStore((s) => s.addItem)
   const removeItem = useDeckStore((s) => s.removeItem)
+  const setItemIcon = useDeckStore((s) => s.setItemIcon)
   const resetDecks = useDeckStore((s) => s.resetDecks)
 
   const deck = useDeckStore(activeDeck)
   const [drafts, setDrafts] = useState<Record<string, string>>({})
+  const [picking, setPicking] = useState<string | null>(null)
 
   const submit = (reelId: string) => {
     const value = drafts[reelId] ?? ''
@@ -58,18 +66,40 @@ export function DeckPanel({ open, onClose }: { open: boolean; onClose: () => voi
             <ul className={styles.items}>
               {reel.items.map((item) => (
                 <li key={item.id} className={styles.item}>
-                  <span className={styles.itemLabel}>{item.label}</span>
-                  <span className={styles.itemDrum} title={`drawn on the drum as "${drumLabel(item)}"`}>
-                    {drumLabel(item)}
-                  </span>
-                  <button
-                    type="button"
-                    className={styles.remove}
-                    aria-label={`Remove ${item.label}`}
-                    onClick={() => removeItem(reel.id, item.id)}
-                  >
-                    ×
-                  </button>
+                  <div className={styles.itemRow}>
+                    <button
+                      type="button"
+                      className={styles.itemIcon}
+                      aria-expanded={picking === item.id}
+                      aria-label={`Icon for ${item.label}`}
+                      title="Choose the mark drawn on the drum"
+                      onClick={() => setPicking((current) => (current === item.id ? null : item.id))}
+                    >
+                      <Icon icon={iconFor(item)} size={18} />
+                    </button>
+                    <span className={styles.itemLabel}>{item.label}</span>
+                    <span
+                      className={styles.itemReadout}
+                      title={`The readout shows "${shortLabel(item)}"`}
+                    >
+                      {shortLabel(item)}
+                    </span>
+                    <button
+                      type="button"
+                      className={styles.remove}
+                      aria-label={`Remove ${item.label}`}
+                      onClick={() => removeItem(reel.id, item.id)}
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {picking === item.id && (
+                    <IconPicker
+                      value={iconIdFor(item)}
+                      onSelect={(icon) => setItemIcon(reel.id, item.id, icon)}
+                    />
+                  )}
                 </li>
               ))}
               {reel.items.length === 0 && <li className={styles.empty}>No items — this reel will not spin.</li>}
@@ -99,7 +129,8 @@ export function DeckPanel({ open, onClose }: { open: boolean; onClose: () => voi
 
       <footer className={styles.foot}>
         <span className={styles.note}>
-          Drum labels are shortened to {DRUM_LABEL_MAX} characters; the full text shows in the brief.
+          Icons are drawn on the drums; the readout shortens labels to {SHORT_LABEL_MAX} characters and
+          the brief spells them out in full.
         </span>
         <Button onClick={resetDecks}>reset decks</Button>
       </footer>

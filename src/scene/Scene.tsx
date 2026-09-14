@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { SlotMachine } from '../machine/SlotMachine'
+import { Cursor } from './Cursor'
 import { IsoCamera } from './IsoCamera'
 import { Lighting } from './Lighting'
 import { Orbit } from './Orbit'
@@ -28,6 +29,7 @@ export function Scene() {
       >
         <IsoCamera />
         <Lighting />
+        <Cursor />
         <Suspense fallback={null}>
           <SlotMachine />
         </Suspense>

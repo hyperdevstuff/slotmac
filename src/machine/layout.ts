@@ -128,3 +128,33 @@ export const LEVER = {
 }
 
 export const MARQUEE = { text: 'GOOD LUCK', centerY: SECTIONS.marquee.centerY }
+
+/** how far the stickers sit off the back panel, so they never z-fight with it */
+const STICKER_GAP = 0.02
+
+/**
+ * The easter eggs: a sticker for each icon library the machine draws from, on the back
+ * of the display. Nothing in the UI points at them — you find them by dragging the
+ * machine around. They sit in opposite corners as seen from behind (the machine's +x is
+ * the viewer's left once you are back there), each tilted its own way.
+ */
+export const BACK_MARKS = {
+  /** nominal height of a mark, in world units — see Sticker for the per-mark scale */
+  size: 0.85,
+  rune: {
+    tilt: 0.14,
+    position: [
+      SECTIONS.screen.width / 2 - 1.15,
+      SECTIONS.screen.centerY - 0.25,
+      -SCREEN_DEPTH / 2 - STICKER_GAP,
+    ] as [number, number, number],
+  },
+  lucide: {
+    tilt: -0.14,
+    position: [
+      -(SECTIONS.screen.width / 2 - 1.15),
+      SECTIONS.screen.centerY + 0.25,
+      -SCREEN_DEPTH / 2 - STICKER_GAP,
+    ] as [number, number, number],
+  },
+}

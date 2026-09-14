@@ -1,6 +1,7 @@
 import * as THREE from 'three'
-import { drumLabel, type DeckItem } from './deck'
-import { runeGlyph } from './rune'
+import type { DeckItem } from './deck'
+import { iconFor } from './icons'
+import { drawIcon } from './icons/draw'
 
 /**
  * Orientation of the tile line-work inside the reel texture.
@@ -13,66 +14,48 @@ import { runeGlyph } from './rune'
 export const REEL_UV_ROTATION = -Math.PI / 2
 
 export interface ReelMarkStyle {
+  /** colour of the drawn mark */
   ink: string
-  accent: string
+  /** stroke width in the icon's own 24-grid units — the libraries draw at 2 */
   strokeWidth: number
 }
 
-export interface ReelTextureOptions {
+export interface ReelStripOptions {
+  /** resolution of one tile along the drum's axis */
   tile?: number
   /** opaque backdrop painted behind the marks; null leaves the strip transparent */
   background?: string | null
+  /** drum circumference, in world units */
+  circumference: number
+  /** drum length along its axis, in world units */
+  drumWidth: number
 }
 
-/** width of a string with letter-spacing applied */
-function measure(ctx: CanvasRenderingContext2D, text: string, tracking: number): number {
-  const glyphs = [...text]
-  return (
-    glyphs.reduce((sum, glyph) => sum + ctx.measureText(glyph).width, 0) +
-    tracking * Math.max(0, glyphs.length - 1)
-  )
-}
-
-/** draws text centred on the origin, shrinking to fit rather than spilling off the tile */
-function drawFittedText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  maxWidth: number,
-  startSize: number,
-  tracking: number,
-  color: string,
-  font: string,
-) {
-  let size = startSize
-  ctx.font = `600 ${size}px ${font}`
-  while (size > 20 && measure(ctx, text, tracking) > maxWidth) {
-    size -= 2
-    ctx.font = `600 ${size}px ${font}`
-  }
-
-  const total = measure(ctx, text, tracking)
-  let x = -total / 2
-  ctx.fillStyle = color
-  ctx.textAlign = 'left'
-  ctx.textBaseline = 'middle'
-  for (const glyph of [...text]) {
-    ctx.fillText(glyph, x, 0)
-    x += ctx.measureText(glyph).width + tracking
-  }
-}
+/** how much of the tile's short side a single icon fills */
+const ICON_FILL = 0.66
 
 /**
- * One reel strip: every item in the deck gets a tile holding a rune mark derived from
- * its text, plus a short label. The label on the drum is abbreviated — the full text is
- * what the readout shows.
+ * One reel strip: every item in the deck gets a tile holding its icon, and nothing else —
+ * the item's text is what the readout under the drums is for.
+ *
+ * A tile is sized to match the piece of drum it actually lands on. That piece is
+ * `circumference / count` wide and `drumWidth` long, which is almost never square, so
+ * laying the tiles out as squares is what used to squash every mark. Keeping the tile's
+ * aspect equal to its patch of drum makes the texture's texel density the same in both
+ * directions, and a square icon then comes out square on the machine.
  */
 export function makeReelTexture(
   items: DeckItem[],
   style: ReelMarkStyle,
-  { tile = 256, background = null }: ReelTextureOptions = {},
+  { tile = 256, background = null, circumference, drumWidth }: ReelStripOptions,
 ): THREE.CanvasTexture {
+  const aspect = items.length > 0 ? circumference / (items.length * drumWidth) : 1
+  const tileWidth = tile * aspect
+  const iconSize = tile * ICON_FILL * Math.min(1, aspect)
+
   const canvas = document.createElement('canvas')
-  canvas.width = tile * items.length
+  // an emptied reel still gets a texture — it just has nothing on it
+  canvas.width = Math.max(1, Math.round(tileWidth * items.length))
   canvas.height = tile
   const ctx = canvas.getContext('2d')!
   ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -81,41 +64,17 @@ export function makeReelTexture(
     ctx.fillRect(0, 0, canvas.width, canvas.height)
   }
 
-  const font = '"JetBrains Mono", ui-monospace, monospace'
-
   items.forEach((item, index) => {
     ctx.save()
-    ctx.translate((index + 0.5) * tile, tile / 2)
+    ctx.translate((index + 0.5) * tileWidth, tile / 2)
     ctx.rotate(REEL_UV_ROTATION)
-
-    // rune mark, sitting above the label
-    const glyph = runeGlyph(item.label)
-    const markSize = tile * 0.34
-    ctx.save()
-    ctx.translate(0, -tile * 0.13)
-    ctx.lineJoin = 'round'
-    ctx.lineCap = 'round'
-    ctx.strokeStyle = style.accent
-    ctx.lineWidth = style.strokeWidth * markSize
-    glyph.strokes.forEach((poly, i) => {
-      ctx.beginPath()
-      poly.forEach(([x, y], pointIndex) => {
-        const px = x * markSize
-        const py = y * markSize
-        if (pointIndex === 0) ctx.moveTo(px, py)
-        else ctx.lineTo(px, py)
-      })
-      if (glyph.closed.includes(i)) ctx.closePath()
-      ctx.stroke()
+    drawIcon(ctx, iconFor(item), {
+      size: iconSize,
+      x: 0,
+      y: 0,
+      color: style.ink,
+      weight: style.strokeWidth,
     })
-    ctx.restore()
-
-    // short label
-    ctx.save()
-    ctx.translate(0, tile * 0.24)
-    drawFittedText(ctx, drumLabel(item).toUpperCase(), tile * 0.84, 46, 2, style.ink, font)
-    ctx.restore()
-
     ctx.restore()
   })
 

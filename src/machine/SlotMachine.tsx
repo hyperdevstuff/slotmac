@@ -8,6 +8,7 @@ import { CoinSlot } from './CoinSlot'
 import { Buttons } from './Buttons'
 import { Lever } from './Lever'
 import { Glow } from './Glow'
+import { Sticker } from './Sticker'
 import { useEntranceTimeline } from '../intro/useEntranceTimeline'
 
 export function SlotMachine() {
@@ -38,6 +39,7 @@ export function SlotMachine() {
       <Buttons />
       <Lever />
       <Glow />
+      <Sticker />
     </group>
   )
 }

@@ -42,9 +42,17 @@ export function Reels() {
   }, [])
   useEffect(() => () => geometry.dispose(), [geometry])
 
-  // one strip per reel: a deck's reels can hold different numbers of items
+  // one strip per reel: a deck's reels can hold different numbers of items, and each
+  // strip is laid out for the patch of drum its items actually cover
   const textures = useMemo(
-    () => contents.map((items) => makeReelTexture(items, def.mark, { background: def.reelBackground })),
+    () =>
+      contents.map((items) =>
+        makeReelTexture(items, def.mark, {
+          background: def.reelBackground,
+          circumference: 2 * Math.PI * REEL.radius,
+          drumWidth: REEL.width,
+        }),
+      ),
     [contents, def],
   )
   useEffect(() => () => textures.forEach((texture) => texture.dispose()), [textures])

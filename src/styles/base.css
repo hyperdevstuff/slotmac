@@ -68,6 +68,12 @@ canvas {
   z-index: 1;
 }
 
+/* the machine can always be turned, so the canvas reads as a grab surface.
+   lib/cursor.ts takes this over once the scene is live (grab / grabbing / pointer). */
+.stage canvas {
+  cursor: grab;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

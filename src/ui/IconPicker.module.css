@@ -1,0 +1,111 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 4px 0 12px;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.search {
+  width: 100%;
+  padding: 6px 9px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.25);
+  border: var(--panel-border-width) solid var(--panel-border);
+  border-radius: var(--panel-radius);
+}
+
+.search::placeholder {
+  color: var(--text-dim);
+}
+
+.search:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.sources {
+  display: flex;
+  gap: 6px;
+}
+
+.source {
+  padding: 3px 8px;
+  font-family: var(--font-label);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--line-faint);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.source:hover,
+.source:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.source[data-active='true'] {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+  gap: 4px;
+  max-height: 186px;
+  padding-right: 2px;
+  overflow-y: auto;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  padding: 0;
+  color: var(--text-dim);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.icon:hover,
+.icon:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.icon[data-active='true'] {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.count {
+  font-family: var(--font-label);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text-dim);
+}

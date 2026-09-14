@@ -4,7 +4,7 @@ import { Line } from '@react-three/drei'
 import { useSceneTheme } from '../theme/materials'
 import { useFontsReady } from '../hooks/useFontsReady'
 import { makeLabelTexture } from '../lib/labelTexture'
-import { drumLabel } from '../lib/deck'
+import { shortLabel } from '../lib/deck'
 import { activeDeck, useDeckStore } from '../stores/deckStore'
 import { useGameStore } from '../stores/gameStore'
 import { Edges } from './Edges'
@@ -318,7 +318,7 @@ export function Cabinet() {
           return (
             <LabelPlane
               key={index}
-              text={item ? drumLabel(item).toUpperCase() : '—'}
+              text={item ? shortLabel(item).toUpperCase() : '—'}
               size={[1.5, 0.375]}
               position={[(index - 1) * 1.75, mid.centerY - 0.12, BODY_FRONT_Z + 0.14]}
               color={item ? def.accent : def.lineDim}
