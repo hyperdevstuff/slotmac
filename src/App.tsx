@@ -6,7 +6,6 @@ import { Landing } from './ui/Landing'
 import { MarkTip } from './ui/MarkTip'
 import { useAppSync } from './theme/useAppSync'
 import { useGameStore } from './stores/gameStore'
-import { sfx } from './lib/audio'
 import { hasWebGL } from './lib/webgl'
 
 function NoWebGL() {
@@ -25,6 +24,9 @@ function NoWebGL() {
 export default function App() {
   useAppSync()
   const [webgl] = useState(() => hasWebGL())
+  const view = useGameStore((s) => s.view)
+  const phase = useGameStore((s) => s.phase)
+  const enter = useGameStore((s) => s.enter)
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -32,10 +34,7 @@ export default function App() {
       const tag = (event.target as HTMLElement | null)?.tagName
       if (tag === 'BUTTON' || tag === 'INPUT' || tag === 'TEXTAREA') return
       event.preventDefault()
-      sfx.unlock()
-
       const state = useGameStore.getState()
-      // on the landing, the same key that spins also walks you in
       if (state.view === 'landing') {
         if (state.phase !== 'intro') state.enter()
         return
@@ -46,11 +45,13 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  const landingVisible = view === 'landing' && phase !== 'intro'
+
   return (
     <>
       <Backdrop />
       {webgl ? <Scene /> : <NoWebGL />}
-      <Landing />
+      <Landing visible={landingVisible} onPlay={enter} />
       <Hud />
       <MarkTip />
     </>

@@ -1,0 +1,10 @@
+{
+  "mcp": {
+    "servers": {
+      "inspo": {
+        "type": "remote",
+        "url": "https://inspomcp.dev/api/mcp"
+      }
+    }
+  }
+}

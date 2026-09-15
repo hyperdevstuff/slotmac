@@ -4,6 +4,8 @@
   z-index: 3;
   pointer-events: none;
   padding: var(--hud-pad);
+  display: flex;
+  flex-direction: column;
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--dur-slow) ease, visibility 0s linear var(--dur-slow);
@@ -24,14 +26,19 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fade-slide-up 600ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 .meta {
   left: var(--hud-pad);
+  animation-delay: 100ms;
 }
 
 .topRight {
   right: var(--hud-pad);
+  animation-delay: 140ms;
 }
 
 .rule {
@@ -42,11 +49,7 @@
 
 .eyebrow,
 .eyebrowDim,
-.axisIndex,
-.axisLabel,
-.axisNote,
-.foot,
-.cta {
+.foot {
   font-family: var(--font-label);
   text-transform: uppercase;
   letter-spacing: var(--tracking);
@@ -65,82 +68,69 @@
 /* ------------------------------------------------------------------ copy */
 
 .copy {
-  position: absolute;
-  top: 50%;
-  left: var(--hud-pad);
-  width: min(30rem, 42vw);
-  transform: translateY(-50%);
-  animation: rise 900ms ease both;
-  animation-delay: 200ms;
+  margin: auto 0;
+  padding-left: var(--hud-pad);
+  max-width: 32rem;
 }
 
 .headline {
   margin: 0;
   font-family: var(--font-ui);
-  font-size: clamp(30px, 3.9vw, 58px);
+  font-size: clamp(40px, 6vw, 82px);
   font-weight: 500;
-  line-height: 1.04;
-  letter-spacing: -0.01em;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
   color: var(--text);
 }
 
-.headline span {
+.headlineLine {
   display: block;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: rise 700ms cubic-bezier(0.23, 1, 0.32, 1) both;
+}
+
+.headlineLine:nth-child(1) {
+  animation-delay: 200ms;
+}
+
+.headlineLine:nth-child(2) {
+  animation-delay: 320ms;
 }
 
 .body {
-  margin: 20px 0 0;
-  max-width: 34ch;
+  margin: 24px 0 0;
+  max-width: 36ch;
   font-size: 15px;
-  line-height: 1.62;
+  line-height: 1.65;
   color: var(--text-dim);
+  text-wrap: pretty;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: rise 700ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation-delay: 460ms;
 }
 
-/* ------------------------------------------------------------------ axes */
+/* ------------------------------------------------------------------ tags */
 
-.axes {
-  margin: 30px 0 0;
+.tags {
+  margin: 26px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
   padding: 0;
   list-style: none;
-  border-top: 1px solid var(--line-faint);
 }
 
-.axis {
-  display: grid;
-  grid-template-columns: 26px 24px auto;
-  grid-template-rows: auto auto;
-  column-gap: 12px;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--line-faint);
-  color: var(--text);
-}
-
-.axisIndex {
-  grid-row: 1;
+.tag {
+  font-family: var(--font-label);
   font-size: 10px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
   color: var(--text-dim);
-}
-
-.axisIcon {
-  grid-row: 1;
-  color: var(--accent);
-}
-
-.axisLabel {
-  grid-row: 1;
-  font-size: 12px;
-  color: var(--text);
-}
-
-.axisNote {
-  grid-column: 3;
-  grid-row: 2;
-  margin-top: 2px;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: none;
-  color: var(--text-dim);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 500ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 
 /* ------------------------------------------------------------------- cta */
@@ -150,22 +140,29 @@
   display: inline-flex;
   align-items: center;
   gap: 14px;
-  margin-top: 30px;
-  padding: 15px 22px;
+  margin-top: 32px;
+  padding: 15px 26px;
   font-size: 12px;
   color: var(--text);
   background: none;
   border: 1px solid var(--panel-border);
   border-radius: var(--panel-radius);
   cursor: pointer;
-  transition: border-color var(--dur-fast) ease, color var(--dur-fast) ease,
-    background-color var(--dur-fast) ease;
+  transition: border-color 140ms ease, color 140ms ease;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: rise 700ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation-delay: 680ms;
 }
 
 .cta:hover,
 .cta:focus-visible {
   color: var(--accent);
   border-color: var(--accent);
+}
+
+.cta:active {
+  transform: scale(0.97);
 }
 
 .ctaIcon {
@@ -177,43 +174,123 @@
   line-height: 1;
 }
 
-.foot {
+/* -------------------------------------------------------------- github link */
+
+.github {
   position: absolute;
   bottom: var(--hud-pad);
   left: var(--hud-pad);
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  font-family: var(--font-label);
+  font-size: 12px;
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--panel-radius);
+  transition: border-color 140ms ease, color 140ms ease, transform 160ms ease-out;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: rise 600ms cubic-bezier(0.23, 1, 0.32, 1) both;
+  animation-delay: 800ms;
+}
+
+.github:hover,
+.github:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.github:active {
+  transform: scale(0.97);
+}
+
+.githubIcon {
+  flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------------- footer */
+
+.foot {
+  position: absolute;
+  bottom: var(--hud-pad);
+  right: var(--hud-pad);
   margin: 0;
   font-size: 10px;
   color: var(--text-dim);
-  opacity: 0.75;
+  opacity: 0.6;
+  animation: fade-in 600ms ease-out both;
+  animation-delay: 100ms;
 }
+
+/* -------------------------------------------------------------- animations */
 
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(calc(-50% + 14px));
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
-    transform: translateY(-50%);
+    transform: translateY(0);
   }
 }
 
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* --------------------------------------------------------- responsive */
+
 @media (max-width: 900px) {
   .copy {
-    top: auto;
-    bottom: calc(var(--hud-pad) + 8px);
-    width: auto;
-    transform: none;
-    animation: none;
+    padding-left: 0;
   }
   .headline {
-    font-size: clamp(26px, 8vw, 38px);
+    font-size: clamp(32px, 10vw, 52px);
   }
-  .axes,
+  .tags,
   .body {
     display: none;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .headlineLine,
+  .body,
+  .cta,
+  .github,
+  .meta,
+  .topRight,
   .foot {
-    display: none;
+    animation: fade-in 200ms ease both;
+    animation-delay: 0ms;
+  }
+
+  .tag {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }

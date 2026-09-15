@@ -53,6 +53,15 @@ export function ComponentIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+/** a play — triangle, the enter gesture */
+export function PlayIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} {...props}>
+      <path d="M6 5v14l12-7z" />
+    </svg>
+  )
+}
+
 /** a lever — the machine's own gesture, used as the call-to-action mark */
 export function LeverIcon(props: SVGProps<SVGSVGElement>) {
   return (

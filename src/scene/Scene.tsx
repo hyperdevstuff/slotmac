@@ -5,6 +5,7 @@ import { Cursor } from './Cursor'
 import { IsoCamera } from './IsoCamera'
 import { Lighting } from './Lighting'
 import { Orbit } from './Orbit'
+import { RandomizedBackdrop } from './RandomizedBackdrop'
 import { VIEW_DIR } from './view'
 
 const START_DISTANCE = 26
@@ -31,6 +32,7 @@ export function Scene() {
         <Lighting />
         <Cursor />
         <Suspense fallback={null}>
+          <RandomizedBackdrop />
           <SlotMachine />
         </Suspense>
         <Orbit />
