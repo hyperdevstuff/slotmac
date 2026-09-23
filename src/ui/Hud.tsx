@@ -8,6 +8,7 @@ import { DeckPanel } from './DeckPanel'
 import { Hint } from './Hint'
 import { Panel } from './Panel'
 import { SoundToggle } from './SoundToggle'
+import { Sponsors } from './Sponsors'
 import styles from './Hud.module.css'
 
 export function Hud() {
@@ -15,7 +16,6 @@ export function Hud() {
   const phase = useGameStore((s) => s.phase)
   const reels = useGameStore((s) => s.reels)
   const deck = useDeckStore(activeDeck)
-  const briefsTaken = useDeckStore((s) => s.briefsTaken)
   const [decksOpen, setDecksOpen] = useState(false)
 
   const visible = view === 'play'
@@ -37,10 +37,10 @@ export function Hud() {
         <Panel>
           <span className={styles.readoutLabel}>deck</span>
           <span className={styles.readoutValue}>{deck.name}</span>
-          <span className={styles.readoutLabel}>briefs taken {briefsTaken}</span>
         </Panel>
       </div>
 
+      <Sponsors />
       <BriefPanel />
 
       <div className={`${styles.corner} ${styles.bl}`}>

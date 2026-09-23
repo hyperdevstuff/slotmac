@@ -4,6 +4,8 @@ import { Scene } from './scene/Scene'
 import { Hud } from './ui/Hud'
 import { Landing } from './ui/Landing'
 import { MarkTip } from './ui/MarkTip'
+import { SponsorDialog } from './ui/Sponsors'
+import { useSponsorStore } from './stores/sponsorStore'
 import { useAppSync } from './theme/useAppSync'
 import { useGameStore } from './stores/gameStore'
 import { hasWebGL } from './lib/webgl'
@@ -30,6 +32,7 @@ export default function App() {
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
+      if (useSponsorStore.getState().placement) return
       if (event.key !== ' ' && event.key !== 'Enter') return
       const tag = (event.target as HTMLElement | null)?.tagName
       if (tag === 'BUTTON' || tag === 'INPUT' || tag === 'TEXTAREA') return
@@ -54,6 +57,7 @@ export default function App() {
       <Landing visible={landingVisible} onPlay={enter} />
       <Hud />
       <MarkTip />
+      <SponsorDialog />
     </>
   )
 }

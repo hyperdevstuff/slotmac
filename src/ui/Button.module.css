@@ -17,12 +17,19 @@
   transform: rotate(var(--panel-rotate));
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
-  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease, background-color var(--dur-fast) ease;
+  transition: color var(--dur-fast) ease-out, border-color var(--dur-fast) ease-out,
+    background-color var(--dur-fast) ease-out, transform var(--dur-fast) ease-out;
 }
 
-.button:hover {
-  color: var(--accent);
-  border-color: var(--accent);
+@media (hover: hover) and (pointer: fine) {
+  .button:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+}
+
+.button:active {
+  transform: rotate(var(--panel-rotate)) scale(0.97);
 }
 
 .button[data-active='true'] {

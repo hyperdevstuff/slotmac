@@ -1,0 +1,172 @@
+.side {
+  position: absolute;
+  top: 50%;
+  width: var(--sponsor-side-size);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+  display: grid;
+  grid-template: repeat(3, minmax(0, 1fr)) / repeat(3, minmax(0, 1fr));
+  pointer-events: none;
+}
+
+.side[data-side='left'] { left: 0; }
+.side[data-side='right'] { right: 0; }
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  color: var(--text-dim);
+  background: rgba(8, 11, 18, 0.65);
+  border: 1px dashed var(--panel-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-ui);
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0;
+  transition: opacity var(--dur-fast) ease, border-color var(--dur-fast) ease, background var(--dur-fast) ease;
+}
+
+.tile:hover, .tile:focus-visible {
+  opacity: 1;
+  border-color: var(--panel-border);
+  background: rgba(8, 11, 18, 0.65);
+  color: var(--text);
+}
+
+.tile:focus-visible, .marquee:focus-visible, .dialog :focus-visible {
+  outline: 2px solid var(--accent-hot);
+  outline-offset: 4px;
+}
+
+.plus { font: 24px var(--font-label); color: var(--accent-hot); }
+.title {
+  font: 600 15px/1.2 var(--font-ui);
+  letter-spacing: 0.06em;
+  color: var(--text);
+}
+.caption { font: 10px/1.6 var(--font-label); color: var(--text-dim); }
+.tile .caption {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking);
+}
+
+.mobile {
+  display: none;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  background: var(--panel-bg);
+  color: var(--text);
+  font: 10px var(--font-label);
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.mobile:focus-visible { outline: 2px solid var(--accent-hot); outline-offset: 4px; }
+
+/* The sign: GOOD LUCK at rest, flips over to the sponsor slot on hover. */
+.marquee {
+  position: relative;
+  width: 176px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.marqueeFlip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+@media (hover: hover) and (pointer: fine) {
+  .marquee:hover .marqueeFront { transform: translateY(-110%); opacity: 0; }
+  .marquee:hover .marqueeBack { transform: translateY(0); opacity: 1; }
+}
+.marquee:focus-visible .marqueeFront { transform: translateY(-110%); opacity: 0; }
+.marquee:focus-visible .marqueeBack { transform: translateY(0); opacity: 1; }
+.marquee:focus-visible .marqueeFront,
+.marquee:focus-visible .marqueeBack { transition: none; }
+.marqueeFront,
+.marqueeBack {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  transition: transform 240ms var(--ease-out), opacity 160ms var(--ease-out);
+}
+.marqueeFront {
+  color: var(--text);
+  font: 600 15px var(--font-ui);
+  letter-spacing: 4px;
+  text-indent: 4px; /* balances the trailing letter-space so the sign stays optically centered */
+}
+.marqueeBack {
+  transform: translateY(110%);
+  opacity: 0;
+  border: 1px dashed var(--panel-border);
+  background: rgba(77, 124, 255, 0.1);
+  color: var(--accent-hot);
+  font: 10px var(--font-label);
+  letter-spacing: var(--tracking);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.dialog {
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+  padding: 26px;
+  background: var(--bg-2);
+  color: var(--text);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 24px 100px #0008;
+}
+.dialog::backdrop { background: #02050bd9; }
+.dialogHead { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.dialog h2 { font-size: 22px; line-height: 1.2; letter-spacing: -0.03em; margin: 0; }
+.dialog p { margin: 16px 0 24px; font-size: 13px; line-height: 1.7; color: var(--text-dim); }
+.contacts { display: grid; gap: 4px; }
+.contacts a {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 44px;
+  padding: 14px 0;
+  border-top: 1px solid var(--panel-border);
+  color: var(--text);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+.contacts a:hover { color: var(--accent-hot); }
+.contacts .caption { text-transform: uppercase; letter-spacing: var(--tracking); }
+
+@media (max-width: 900px), (max-height: 540px), (hover: none) {
+  .side { display: none; }
+  .mobile { display: block; position: absolute; left: var(--hud-pad); top: calc(var(--hud-pad) + 80px); pointer-events: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile, .marqueeFront, .marqueeBack { transition: none; }
+  .marquee .marqueeFront,
+  .marquee:hover .marqueeFront,
+  .marquee:focus-visible .marqueeFront,
+  .marquee .marqueeBack { transform: none; }
+  .marqueeBack { visibility: hidden; opacity: 0; }
+  .marquee:hover .marqueeFront,
+  .marquee:focus-visible .marqueeFront { visibility: hidden; opacity: 0; }
+  .marquee:hover .marqueeBack,
+  .marquee:focus-visible .marqueeBack { visibility: visible; opacity: 1; }
+}

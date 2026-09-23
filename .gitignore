@@ -9,3 +9,5 @@ dist-ssr
 
 # local agent config, not part of the project
 .commandcode/
+.mcp.json
+.playwright-mcp/

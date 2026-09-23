@@ -3,6 +3,7 @@ import {
   SHIPPED_DECKS,
   STORAGE_VERSION,
   newId,
+  newDeck,
   type Deck,
   type DeckItem,
   type PersistedDecks,
@@ -32,7 +33,12 @@ function load(): PersistedDecks {
     const activeDeckId = parsed.decks.some((deck) => deck.id === parsed.activeDeckId)
       ? parsed.activeDeckId
       : parsed.decks[0].id
-    return { version: STORAGE_VERSION, decks: parsed.decks, activeDeckId }
+    return {
+      version: STORAGE_VERSION,
+      decks: parsed.decks,
+      activeDeckId,
+      briefsTaken: typeof parsed.briefsTaken === 'number' ? parsed.briefsTaken : 0,
+    }
   } catch {
     // a corrupt save should never take the app down with it
     return fallback
@@ -44,7 +50,12 @@ function persist(state: Pick<DeckState, 'decks' | 'activeDeckId' | 'briefsTaken'
   try {
     localStorage.setItem(
       STORAGE_KEY,
-      JSON.stringify({ version: STORAGE_VERSION, decks: state.decks, briefsTaken: state.briefsTaken }),
+      JSON.stringify({
+      version: STORAGE_VERSION,
+      decks: state.decks,
+      activeDeckId: state.activeDeckId,
+      briefsTaken: state.briefsTaken,
+    }),
     )
   } catch {
     /* storage full or blocked — the app still works, it just forgets */
@@ -62,6 +73,9 @@ interface DeckState {
   setItemIcon: (reelId: string, itemId: string, icon: string) => void
   resetDecks: () => void
   countBrief: () => void
+  addDeck: (name: string) => void
+  removeDeck: (deckId: string) => void
+  renameDeck: (deckId: string, name: string) => void
 }
 
 const initial = load()
@@ -118,6 +132,31 @@ export const useDeckStore = create<DeckState>((set, get) => {
 
     resetDecks: () => commit({ ...fresh(), briefsTaken: 0 }),
     countBrief: () => commit({ briefsTaken: get().briefsTaken + 1 }),
+
+    addDeck: (name) => {
+      const trimmed = name.trim()
+      if (!trimmed) return
+      const deck = newDeck(trimmed)
+      commit({ decks: [...get().decks, deck], activeDeckId: deck.id })
+    },
+
+    removeDeck: (deckId) => {
+      const decks = get().decks.filter((d) => d.id !== deckId)
+      if (decks.length === 0) return
+      const activeDeckId =
+        deckId === get().activeDeckId ? decks[0].id : get().activeDeckId
+      commit({ decks, activeDeckId })
+    },
+
+    renameDeck: (deckId, name) => {
+      const trimmed = name.trim()
+      if (!trimmed) return
+      commit({
+        decks: get().decks.map((deck) =>
+          deck.id === deckId ? { ...deck, name: trimmed } : deck,
+        ),
+      })
+    },
   }
 })
 

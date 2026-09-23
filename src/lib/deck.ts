@@ -52,6 +52,26 @@ function items(prefix: string, entries: ShippedItem[]): DeckItem[] {
   return entries.map(([label, icon, short], index) => ({ id: `${prefix}-${index}`, label, icon, short }))
 }
 
+/** blueprint reels for a freshly created deck — same structure as the first shipped deck */
+const BLANK_DECK_REELS: { name: string }[] = [
+  { name: 'Type' },
+  { name: 'Colour' },
+  { name: 'Component' },
+]
+
+/** create a new user deck with blank reels, seeded from the blueprint above */
+export function newDeck(name: string): Deck {
+  return {
+    id: newId('deck'),
+    name,
+    reels: BLANK_DECK_REELS.map((reel) => ({
+      id: newId('reel'),
+      name: reel.name,
+      items: [],
+    })),
+  }
+}
+
 export const SHIPPED_DECKS: Deck[] = [
   {
     id: 'ui',
@@ -182,4 +202,6 @@ export interface PersistedDecks {
   version: number
   decks: Deck[]
   activeDeckId: string
+  /** how many briefs have been taken — persisted so the count survives a reload */
+  briefsTaken?: number
 }

@@ -17,13 +17,13 @@
   -webkit-backdrop-filter: blur(12px);
   transform: translateX(102%);
   visibility: hidden;
-  transition: transform var(--dur-med) ease, visibility 0s linear var(--dur-med);
+  transition: transform var(--dur-med) var(--ease-out), visibility 0s linear var(--dur-med);
 }
 
 .root[data-open='true'] {
   transform: translateX(0);
   visibility: visible;
-  transition: transform var(--dur-med) ease, visibility 0s;
+  transition: transform var(--dur-med) var(--ease-out), visibility 0s;
 }
 
 .head {
@@ -41,7 +41,8 @@
 .count,
 .itemReadout,
 .note,
-.tabs button {
+.deckName,
+.stageLabel {
   font-family: var(--font-label);
   text-transform: uppercase;
   letter-spacing: var(--tracking);
@@ -62,10 +63,191 @@
   color: var(--text-dim);
 }
 
-.tabs {
+/* -------------------------------------------------------- deck management stage */
+
+.deckStage {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line-faint);
+}
+
+.stageLabel {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.deckList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.deckRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+}
+
+.deckName {
+  justify-self: start;
+  pointer-events: auto;
+  padding: 8px 10px;
+  font-size: 12px;
+  text-align: left;
+  color: var(--text);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--panel-radius);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.deckName:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .deckName:hover {
+    color: var(--accent);
+    background: rgba(77, 124, 255, 0.06);
+    border-color: var(--line-faint);
+  }
+}
+
+.activeDeck {
+  color: var(--accent);
+  background: rgba(77, 124, 255, 0.1);
+  border-color: var(--accent);
+}
+
+.activeDot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-left: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.deckNameText {
+  display: inline-flex;
+  align-items: center;
+}
+
+.editDeck,
+.removeDeck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.editDeck:active,
+.removeDeck:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .editDeck:hover {
+    color: var(--accent);
+    border-color: var(--line-faint);
+  }
+
+  .removeDeck:hover {
+    color: var(--red);
+    border-color: var(--red);
+  }
+}
+
+.renameForm {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+}
+
+.renameForm input {
+  flex: 1;
+  padding: 8px 10px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.25);
+  border: var(--panel-border-width) solid var(--panel-border);
+  border-radius: var(--panel-radius);
+}
+
+.renameForm input::placeholder {
+  color: var(--text-dim);
+}
+
+.renameForm input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.addDeck {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.addDeck input,
+.add input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.25);
+  border: var(--panel-border-width) solid var(--panel-border);
+  border-radius: var(--panel-radius);
+}
+
+.addDeck input::placeholder,
+.add input::placeholder {
+  color: var(--text-dim);
+}
+
+.addDeck input:focus-visible,
+.add input:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ---------------------------------------------------------- reel editing stage */
+
+.reelStage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-wrap: pretty;
+}
+
+.stageLabel {
+  font-size: 10px;
+  color: var(--text-dim);
 }
 
 .reels {
@@ -82,6 +264,7 @@
   font-size: 11px;
   font-weight: 500;
   color: var(--accent);
+  text-wrap: balance;
 }
 
 .count {
@@ -114,27 +297,36 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
+  width: 40px;
+  height: 40px;
+  padding: 5px;
   color: var(--text);
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid var(--line-faint);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
-.itemIcon:hover,
-.itemIcon:focus-visible,
-.itemIcon[aria-expanded='true'] {
-  color: var(--accent);
-  border-color: var(--accent);
+.itemIcon:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .itemIcon:hover,
+  .itemIcon:focus-visible,
+  .itemIcon[aria-expanded='true'] {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
 }
 
 .itemLabel {
   font-size: 14px;
   color: var(--text);
+  text-wrap: balance;
 }
 
 .itemReadout {
@@ -144,23 +336,34 @@
 }
 
 .remove {
-  width: 20px;
-  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
   padding: 0;
   font-size: 15px;
   line-height: 1;
   color: var(--text-dim);
   background: none;
   border: 1px solid transparent;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
-.remove:hover,
-.remove:focus-visible {
-  color: var(--red);
-  border-color: var(--red);
+.remove:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .remove:hover,
+  .remove:focus-visible {
+    color: var(--red);
+    border-color: var(--red);
+  }
 }
 
 .empty {
@@ -175,26 +378,7 @@
   margin-top: 10px;
 }
 
-.add input {
-  flex: 1;
-  min-width: 0;
-  padding: 8px 10px;
-  font-family: var(--font-ui);
-  font-size: 14px;
-  color: var(--text);
-  background: rgba(0, 0, 0, 0.25);
-  border: var(--panel-border-width) solid var(--panel-border);
-  border-radius: var(--panel-radius);
-}
-
-.add input::placeholder {
-  color: var(--text-dim);
-}
-
-.add input:focus-visible {
-  outline: none;
-  border-color: var(--accent);
-}
+/* ----------------------------------------------------------------- footer */
 
 .foot {
   margin-top: auto;
@@ -211,4 +395,13 @@
   letter-spacing: 0.06em;
   text-transform: none;
   color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+/* --------------------------------------------------------- responsive */
+
+@media (max-width: 640px) {
+  .root {
+    width: 100%;
+  }
 }

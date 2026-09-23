@@ -1,4 +1,5 @@
 .hud {
+  --sponsor-side-size: min(510px, calc((100vw - 60vh) / 2));
   position: fixed;
   inset: 0;
   z-index: 2;

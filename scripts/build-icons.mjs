@@ -150,6 +150,26 @@ function primitivesToPath(tag) {
   return undefined
 }
 
+/* --------------------------------------------------- what the sprite actually draws */
+
+/**
+ * Only the shapes a library means you to see live outside `<defs>`. Both of the marks
+ * that used to arrive with a grey square behind them got it from their own clipping
+ * rect: the outline is wrapped in `<g clip-path="url(#…clip0_…)">` and the clip path
+ * declares `<rect width="24" height="24" fill="white"/>`. That rect is a mask, never a
+ * glyph — harvesting it paints a full-grid plate in whatever ink the machine is using.
+ */
+function drawableShapes(body) {
+  return body.replace(/<defs\b[\s\S]*?<\/defs>/g, '').replace(/<clipPath\b[\s\S]*?<\/clipPath>/g, '')
+}
+
+/** belt and braces: a shape covering the whole 24 x 24 grid is a backdrop, not a mark */
+const VIEWPORT_BACKDROPS = new Set(['M0 0H24V24H0Z', 'M0 0h24v24H0Z', 'M0 0H24V24H0z', 'M0 0h24v24H0z'])
+
+function isViewportBackdrop(d) {
+  return VIEWPORT_BACKDROPS.has(d)
+}
+
 /* ------------------------------------------------------------------ generators */
 
 const lines = []
@@ -178,9 +198,10 @@ async function buildRune() {
   const icons = []
   for (const [, id, body] of sprite.matchAll(/<symbol id="([^"]+)"[^>]*>([\s\S]*?)<\/symbol>/g)) {
     const paths = []
-    for (const [tag] of body.matchAll(/<(?:path|line|polyline|polygon|circle|ellipse|rect)\b[^>]*>/g)) {
+    const drawable = drawableShapes(body)
+    for (const [tag] of drawable.matchAll(/<(?:path|line|polyline|polygon|circle|ellipse|rect)\b[^>]*>/g)) {
       const d = primitivesToPath(tag)
-      if (!d) continue
+      if (!d || isViewportBackdrop(d)) continue
       // the only filled strokes in the set are the dot on money-tag; note them per path
       paths.push({ d, fill: /fill="(?!none)[^"]*"/.test(tag) })
     }
@@ -228,9 +249,9 @@ async function buildLucide() {
       }
       const svg = await response.text()
       const paths = []
-      for (const [tag] of svg.matchAll(/<(?:path|line|polyline|polygon|circle|ellipse|rect)\b[^>]*>/g)) {
+      for (const [tag] of drawableShapes(svg).matchAll(/<(?:path|line|polyline|polygon|circle|ellipse|rect)\b[^>]*>/g)) {
         const d = primitivesToPath(tag)
-        if (d) paths.push({ d })
+        if (d && !isViewportBackdrop(d)) paths.push({ d })
       }
       if (paths.length === 0) {
         missing.push(name)

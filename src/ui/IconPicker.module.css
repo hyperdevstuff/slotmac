@@ -31,6 +31,13 @@
   border-color: var(--accent);
 }
 
+.controlsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .sources {
   display: flex;
   gap: 6px;
@@ -47,19 +54,49 @@
   border: 1px solid var(--line-faint);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
-}
-
-.source:hover,
-.source:focus-visible {
-  color: var(--accent);
-  border-color: var(--accent);
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
 }
 
 .source[data-active='true'] {
   color: var(--bg);
   background: var(--accent);
   border-color: var(--accent);
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.close:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .source:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .close:hover {
+    color: var(--text);
+    border-color: var(--line-faint);
+  }
 }
 
 .grid {
@@ -76,19 +113,29 @@
   align-items: center;
   justify-content: center;
   aspect-ratio: 1;
+  width: 40px;
+  height: 40px;
   padding: 0;
   color: var(--text-dim);
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: color var(--dur-fast) ease, border-color var(--dur-fast) ease;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
 }
 
-.icon:hover,
-.icon:focus-visible {
-  color: var(--accent);
-  border-color: var(--accent);
+.icon:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .icon:hover,
+  .icon:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
 }
 
 .icon[data-active='true'] {
@@ -101,6 +148,7 @@
   margin: 0;
   font-size: 13px;
   color: var(--text-dim);
+  text-wrap: pretty;
 }
 
 .count {
@@ -108,4 +156,12 @@
   font-size: 9px;
   letter-spacing: 0.06em;
   color: var(--text-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon,
+  .source,
+  .close {
+    transition: none;
+  }
 }

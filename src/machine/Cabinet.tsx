@@ -1,6 +1,8 @@
 import { useEffect, useMemo, type ReactNode } from 'react'
 import * as THREE from 'three'
-import { Line } from '@react-three/drei'
+import { Html, Line } from '@react-three/drei'
+import { useSponsorStore } from '../stores/sponsorStore'
+import sponsorStyles from '../ui/Sponsors.module.css'
 import { useSceneTheme } from '../theme/materials'
 import { useFontsReady } from '../hooks/useFontsReady'
 import { makeLabelTexture } from '../lib/labelTexture'
@@ -271,14 +273,24 @@ export function Cabinet() {
           position={[0, marquee.centerY, marquee.depth / 2 + 0.04]}
           variant="panel"
         />
-        <LabelPlane
-          text={MARQUEE.text}
-          size={[3.2, 0.46]}
-          position={[0, marquee.centerY, marquee.depth / 2 + 0.11]}
-          color={def.line}
-          fontSize={56}
-          tracking={14}
-        />
+        <Html
+          transform
+          occlude
+          position={[0, marquee.centerY, marquee.depth / 2 + 0.12]}
+          zIndexRange={[1, 0]}
+        >
+          <button
+            type="button"
+            className={sponsorStyles.marquee}
+            aria-label="Sponsor the Good Luck banner, featured placement"
+            onClick={() => useSponsorStore.getState().open('marquee')}
+          >
+            <span className={sponsorStyles.marqueeFlip} aria-hidden="true">
+              <span className={sponsorStyles.marqueeFront}>{MARQUEE.text}</span>
+              <span className={sponsorStyles.marqueeBack}>Sponsor slot ↗</span>
+            </span>
+          </button>
+        </Html>
         <Line points={sparkle(-2.0, marquee.centerY, marquee.depth / 2 + 0.11, 0.14)} color={def.accent} lineWidth={def.edgeWidth * 0.9} />
         <Line points={sparkle(2.0, marquee.centerY, marquee.depth / 2 + 0.11, 0.14)} color={def.accent} lineWidth={def.edgeWidth * 0.9} />
       </group>

@@ -6,6 +6,9 @@
   --dur-med: 320ms;
   --dur-slow: 640ms;
 
+  /* strong ease-out for UI interactions */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
   /* ------------------------------------------------------------------- type */
   --font-ui: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-label: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ICONS, type IconSource } from '../lib/icons'
 import { Icon } from './Icon'
 import styles from './IconPicker.module.css'
@@ -13,9 +13,28 @@ const SOURCES: { id: IconSource | 'all'; label: string }[] = [
  * The mark library, as a grid. Every icon the machine knows about is here — the only
  * way an item gets a mark that means something is if you can see them and pick one.
  */
-export function IconPicker({ value, onSelect }: { value: string; onSelect: (id: string) => void }) {
+export function IconPicker({
+  value,
+  onSelect,
+  onClose,
+}: {
+  value: string
+  onSelect: (id: string) => void
+  onClose: () => void
+}) {
   const [query, setQuery] = useState('')
   const [source, setSource] = useState<IconSource | 'all'>('all')
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.stopPropagation()
+        onClose()
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
 
   const matches = useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -40,18 +59,29 @@ export function IconPicker({ value, onSelect }: { value: string; onSelect: (id: 
           aria-label="Search icons"
           onChange={(event) => setQuery(event.target.value)}
         />
-        <div className={styles.sources}>
-          {SOURCES.map((entry) => (
-            <button
-              key={entry.id}
-              type="button"
-              className={styles.source}
-              data-active={entry.id === source}
-              onClick={() => setSource(entry.id)}
-            >
-              {entry.label}
-            </button>
-          ))}
+        <div className={styles.controlsRow}>
+          <div className={styles.sources}>
+            {SOURCES.map((entry) => (
+              <button
+                key={entry.id}
+                type="button"
+                className={styles.source}
+                data-active={entry.id === source}
+                onClick={() => setSource(entry.id)}
+              >
+                {entry.label}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            className={styles.close}
+            aria-label="Close icon picker"
+            title="Close (Esc)"
+            onClick={onClose}
+          >
+            ×
+          </button>
         </div>
       </div>
 
@@ -68,7 +98,10 @@ export function IconPicker({ value, onSelect }: { value: string; onSelect: (id: 
               title={`${icon.name} — ${icon.source}`}
               aria-label={`${icon.name} (${icon.source})`}
               aria-pressed={icon.id === value}
-              onClick={() => onSelect(icon.id)}
+              onClick={() => {
+                onSelect(icon.id)
+                onClose()
+              }}
             >
               <Icon icon={icon} size={17} />
             </button>

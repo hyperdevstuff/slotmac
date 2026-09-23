@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { activeDeck, useDeckStore } from '../stores/deckStore'
 import { useGameStore } from '../stores/gameStore'
 import { Panel } from './Panel'
-import { Button } from './Button'
 import styles from './BriefPanel.module.css'
 
 /**
@@ -50,9 +49,12 @@ export function BriefPanel() {
             </li>
           ))}
         </ul>
-        <Button className={styles.copy} onClick={copy}>
-          {copied ? 'copied' : 'copy brief'}
-        </Button>
+        <button type="button" className={styles.copy} onClick={copy} aria-label={copied ? 'Brief copied' : 'Copy brief'} title={copied ? 'Copied' : 'Copy brief'}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            {copied ? <path d="m5 12 4 4L19 6" /> : <><rect x="8" y="8" width="12" height="12" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></>}
+          </svg>
+        </button>
+        <span className="sr-only" role="status">{copied ? 'Brief copied' : ''}</span>
       </Panel>
     </div>
   )

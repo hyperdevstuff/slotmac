@@ -13,8 +13,12 @@
 }
 
 .panel {
-  width: min(25rem, 32vw);
-  padding: 16px 18px;
+  width: min(25rem, calc(var(--sponsor-side-size) - var(--hud-pad) * 2));
+  height: calc(var(--sponsor-side-size) / 3);
+  display: flex;
+  flex-direction: column;
+  pointer-events: auto;
+  padding: 10px 14px;
 }
 
 .caption,
@@ -26,41 +30,76 @@
 
 .caption {
   display: block;
-  font-size: 11px;
+  font-size: 13px;
+  line-height: 16px;
+  padding-right: 32px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: var(--accent);
 }
 
 .rows {
-  margin: 12px 0 0;
+  margin: 4px 0 0;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   padding: 0;
   list-style: none;
 }
 
 .row {
   display: grid;
-  grid-template-columns: 6.5rem 1fr;
-  gap: 12px;
-  align-items: baseline;
-  padding: 7px 0;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 0;
+  padding: 0;
   border-bottom: 1px solid var(--line-faint);
 }
 
 .reel {
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-dim);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .item {
   font-size: 15px;
   line-height: 1.35;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   color: var(--text);
 }
 
 .copy {
-  margin-top: 14px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--dur-fast) ease, color var(--dur-fast) ease, background var(--dur-fast) ease;
 }
 
-@media (max-width: 900px) {
+.panel:hover .copy, .panel:focus-within .copy { opacity: 1; }
+.copy:hover { color: var(--text); background: var(--bg-2); }
+.copy:focus-visible { outline: 2px solid var(--accent-hot); outline-offset: 2px; }
+@media (hover: none) { .copy { opacity: 1; } }
+
+@media (max-width: 900px), (max-height: 540px), (hover: none) {
   .root {
     top: auto;
     bottom: calc(var(--hud-pad) + 46px);
@@ -70,7 +109,9 @@
     transform: none;
   }
   .panel {
-    width: auto;
+    width: min(25rem, calc(100vw - var(--hud-pad) * 2));
+    height: auto;
+    max-height: max(64px, calc(100dvh - var(--hud-pad) * 2 - 190px));
   }
   .row {
     grid-template-columns: 5rem 1fr;
